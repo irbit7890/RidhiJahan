@@ -6,9 +6,9 @@
     <title>Ridhi-Jahan Video</title>
     <style>
         :root {
-            --primary: #8a4fff;
-            --primary-dark: #6a2ce8;
-            --text: #f0f0f0;
+            --primary: #efefef;
+            --primary-dark: #efefef;
+            --text: #121212;
             --bg: #121212;
             --card-bg: #1e1e1e;
             --border: #333;
@@ -141,18 +141,21 @@
             justify-content: center;
             margin-top: 20px;
             gap: 15px;
+            flex-wrap: wrap;
             transition: all 0.3s ease;
         }
         
         .btn {
             padding: 12px 24px;
             background-color: var(--primary);
-            color: white;
+            color: var(--text);
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 100px;
+            text-align: center;
         }
         
         .btn:hover {
@@ -164,6 +167,15 @@
         .btn:active {
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #333;
+            color: var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #444;
         }
         
         .footer {
@@ -185,6 +197,7 @@
             
             .btn {
                 padding: 10px 20px;
+                min-width: 80px;
             }
         }
         
@@ -198,13 +211,13 @@
             }
             
             .controls {
-                flex-direction: column;
-                align-items: center;
+                gap: 10px;
             }
             
             .btn {
-                width: 80%;
-                max-width: 200px;
+                padding: 10px 15px;
+                font-size: 14px;
+                min-width: 70px;
             }
         }
     </style>
@@ -217,26 +230,20 @@
     
     <!-- Main Content -->
     <div class="content">
-        <div class="heading">
-            <h1 class="title">Ridhi-Jahan</h1>
-            <p class="subtitle"> </p>
-        </div>
-        
         <div class="card">
-            <video autoplay muted loop playsinline>
+            <video autoplay muted loop playsinline id="mainVideo">
                 <source src="video.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
         
         <div class="controls">
+            <button class="btn btn-secondary" id="backwardBtn">-10s</button>
             <button class="btn" id="playBtn">Play</button>
+            <button class="btn btn-secondary" id="forwardBtn">+10s</button>
             <button class="btn" id="muteBtn">Unmute</button>
         </div>
         
-        <div class="footer">
-            © 2023 Ridhi-Jahan | All Rights Reserved
-        </div>
     </div>
 
     <script>
@@ -269,37 +276,84 @@
         });
         
         // Video controls
-        const video = document.querySelector('video');
+        const video = document.getElementById('mainVideo');
         const playBtn = document.getElementById('playBtn');
         const muteBtn = document.getElementById('muteBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const backwardBtn = document.getElementById('backwardBtn');
         
-        if (video && playBtn && muteBtn) {
+        if (video) {
             // Initial button states
-            playBtn.textContent = video.paused ? 'Play' : 'Pause';
-            muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+            if (playBtn) {
+                playBtn.textContent = video.paused ? 'Play' : 'Pause';
+                playBtn.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play();
+                        playBtn.textContent = 'Pause';
+                    } else {
+                        video.pause();
+                        playBtn.textContent = 'Play';
+                    }
+                });
+            }
             
-            playBtn.addEventListener('click', function() {
-                if (video.paused) {
-                    video.play();
-                    playBtn.textContent = 'Pause';
-                } else {
-                    video.pause();
-                    playBtn.textContent = 'Play';
+            if (muteBtn) {
+                muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+                muteBtn.addEventListener('click', function() {
+                    video.muted = !video.muted;
+                    muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+                });
+            }
+            
+            if (forwardBtn) {
+                forwardBtn.addEventListener('click', function() {
+                    video.currentTime += 10; // Forward 10 seconds
+                });
+            }
+            
+            if (backwardBtn) {
+                backwardBtn.addEventListener('click', function() {
+                    video.currentTime -= 10; // Backward 10 seconds
+                    // Ensure we don't go before start
+                    if (video.currentTime < 0) video.currentTime = 0;
+                });
+            }
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (!video) return;
+                
+                switch(e.key) {
+                    case ' ':
+                        // Space bar to play/pause
+                        if (video.paused) {
+                            video.play();
+                            if (playBtn) playBtn.textContent = 'Pause';
+                        } else {
+                            video.pause();
+                            if (playBtn) playBtn.textContent = 'Play';
+                        }
+                        e.preventDefault();
+                        break;
+                    case 'ArrowRight':
+                        // Right arrow to forward 10s
+                        video.currentTime += 10;
+                        e.preventDefault();
+                        break;
+                    case 'ArrowLeft':
+                        // Left arrow to backward 10s
+                        video.currentTime = Math.max(0, video.currentTime - 10);
+                        e.preventDefault();
+                        break;
+                    case 'm':
+                    case 'M':
+                        // M key to mute/unmute
+                        video.muted = !video.muted;
+                        if (muteBtn) muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+                        e.preventDefault();
+                        break;
                 }
             });
-            
-            muteBtn.addEventListener('click', function() {
-                video.muted = !video.muted;
-                muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
-            });
-        }
-        
-        // Adjust card size based on video aspect ratio
-        if (video) {
-            video.onloadedmetadata = function() {
-                const aspectRatio = video.videoWidth / video.videoHeight;
-                // You can use this to adjust styling if needed
-            };
         }
     </script>
 </body>
