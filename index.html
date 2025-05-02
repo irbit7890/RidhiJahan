@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ridhi-Jahan Video</title>
+    <title>Ridhi-Jahan Videos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary: #efefef;
-            --primary-dark: #efefef;
-            --text: #121212;
+            --primary: #8a4fff;
+            --primary-dark: #6a2ce8;
+            --text: #f0f0f0;
             --bg: #121212;
             --card-bg: #1e1e1e;
             --border: #333;
@@ -50,23 +51,23 @@
         }
         
         .preloader img {
-            width: 70%;
-            height: auto;
+            width: 150px;
+            height: 150px;
             object-fit: contain;
             transition: transform 0.5s ease;
         }
         
         @media (max-width: 768px) {
             .preloader img {
-                width: 70%;
-                height: auto;
+                width: 120px;
+                height: 120px;
             }
         }
         
         @media (max-width: 480px) {
             .preloader img {
-                width: 70%;
-                height: auto;
+                width: 100px;
+                height: 100px;
             }
         }
         
@@ -145,10 +146,17 @@
             transition: all 0.3s ease;
         }
         
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
         .btn {
             padding: 12px 24px;
             background-color: var(--primary);
-            color: var(--text);
+            color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -156,6 +164,10 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             min-width: 100px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .btn:hover {
@@ -171,11 +183,15 @@
         
         .btn-secondary {
             background-color: #333;
-            color: var(--primary);
         }
         
         .btn-secondary:hover {
             background-color: #444;
+        }
+        
+        .btn-nav {
+            padding: 12px 20px;
+            min-width: auto;
         }
         
         .footer {
@@ -184,6 +200,13 @@
             font-size: 14px;
             opacity: 0.6;
             transition: all 0.3s ease;
+        }
+        
+        .video-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            opacity: 0.8;
         }
         
         @media (max-width: 768px) {
@@ -198,6 +221,10 @@
             .btn {
                 padding: 10px 20px;
                 min-width: 80px;
+            }
+            
+            .btn-nav {
+                padding: 10px 15px;
             }
         }
         
@@ -219,6 +246,14 @@
                 font-size: 14px;
                 min-width: 70px;
             }
+            
+            .btn-nav {
+                padding: 8px 12px;
+            }
+            
+            .btn i {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -230,6 +265,11 @@
     
     <!-- Main Content -->
     <div class="content">
+        <div class="heading">
+            <h1 class="title">Ridhi-Jahan</h1>
+            <p class="subtitle">Masturbating with Cucumber 🥒</p>
+        </div>
+        
         <div class="card">
             <video autoplay muted loop playsinline id="mainVideo">
                 <source src="video.mp4" type="video/mp4">
@@ -237,16 +277,48 @@
             </video>
         </div>
         
+        <div class="video-info" id="videoInfo">Video 1 of 2</div>
+        
         <div class="controls">
-            <button class="btn btn-secondary" id="backwardBtn">-10s</button>
-            <button class="btn" id="playBtn">Play</button>
-            <button class="btn btn-secondary" id="forwardBtn">+10s</button>
-            <button class="btn" id="muteBtn">Unmute</button>
+            <button class="btn btn-secondary" id="backwardBtn">
+                <i class="fas fa-backward"></i> 10s
+            </button>
+            <button class="btn" id="playBtn">
+                <i class="fas fa-play"></i> Play
+            </button>
+            <button class="btn btn-secondary" id="forwardBtn">
+                10s <i class="fas fa-forward"></i>
+            </button>
+            <button class="btn" id="muteBtn">
+                <i class="fas fa-volume-up"></i> Unmute
+            </button>
         </div>
         
+        <div class="nav-controls">
+            <button class="btn btn-nav btn-secondary" id="prevBtn">
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button class="btn btn-nav btn-secondary" id="nextBtn">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <div class="footer">
+            © 2023 Ridhi-Jahan | All Rights Reserved
+        </div>
     </div>
 
     <script>
+        // Video data
+        const videos = [
+            { src: "video.mp4", title: "Video 1" },
+            { src: "video2.mp4", title: "Video 2" }
+        ];
+        
+        let currentVideoIndex = 0;
+        const videoElement = document.getElementById('mainVideo');
+        const videoInfoElement = document.getElementById('videoInfo');
+        
         // Preloader functionality with smooth transitions
         document.addEventListener('DOMContentLoaded', function() {
             // Start loading animation
@@ -273,87 +345,171 @@
                     }
                 }, 800);
             }, 2000); // Adjust this time as needed
+            
+            // Initialize video
+            loadVideo(currentVideoIndex);
         });
         
+        // Load video function
+        function loadVideo(index) {
+            if (index >= 0 && index < videos.length) {
+                currentVideoIndex = index;
+                videoElement.src = videos[index].src;
+                videoElement.load();
+                videoElement.play();
+                
+                // Update video info
+                if (videoInfoElement) {
+                    videoInfoElement.textContent = `${videos[index].title} (${index + 1} of ${videos.length})`;
+                }
+                
+                // Update button states
+                updateButtonStates();
+            }
+        }
+        
+        // Update button states
+        function updateButtonStates() {
+            if (playBtn) {
+                playBtn.innerHTML = `<i class="fas ${videoElement.paused ? 'fa-play' : 'fa-pause'}"></i> ${videoElement.paused ? 'Play' : 'Pause'}`;
+            }
+            if (muteBtn) {
+                muteBtn.innerHTML = `<i class="fas ${videoElement.muted ? 'fa-volume-mute' : 'fa-volume-up'}"></i> ${videoElement.muted ? 'Unmute' : 'Mute'}`;
+            }
+            if (prevBtn) {
+                prevBtn.disabled = currentVideoIndex === 0;
+            }
+            if (nextBtn) {
+                nextBtn.disabled = currentVideoIndex === videos.length - 1;
+            }
+        }
+        
         // Video controls
-        const video = document.getElementById('mainVideo');
         const playBtn = document.getElementById('playBtn');
         const muteBtn = document.getElementById('muteBtn');
         const forwardBtn = document.getElementById('forwardBtn');
         const backwardBtn = document.getElementById('backwardBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         
-        if (video) {
+        if (videoElement) {
             // Initial button states
+            updateButtonStates();
+            
+            // Event listeners
             if (playBtn) {
-                playBtn.textContent = video.paused ? 'Play' : 'Pause';
                 playBtn.addEventListener('click', function() {
-                    if (video.paused) {
-                        video.play();
-                        playBtn.textContent = 'Pause';
+                    if (videoElement.paused) {
+                        videoElement.play();
                     } else {
-                        video.pause();
-                        playBtn.textContent = 'Play';
+                        videoElement.pause();
                     }
+                    updateButtonStates();
                 });
             }
             
             if (muteBtn) {
-                muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
                 muteBtn.addEventListener('click', function() {
-                    video.muted = !video.muted;
-                    muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+                    videoElement.muted = !videoElement.muted;
+                    updateButtonStates();
                 });
             }
             
             if (forwardBtn) {
                 forwardBtn.addEventListener('click', function() {
-                    video.currentTime += 10; // Forward 10 seconds
+                    videoElement.currentTime += 10; // Forward 10 seconds
                 });
             }
             
             if (backwardBtn) {
                 backwardBtn.addEventListener('click', function() {
-                    video.currentTime -= 10; // Backward 10 seconds
-                    // Ensure we don't go before start
-                    if (video.currentTime < 0) video.currentTime = 0;
+                    videoElement.currentTime = Math.max(0, videoElement.currentTime - 10); // Backward 10 seconds
+                });
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    if (currentVideoIndex > 0) {
+                        loadVideo(currentVideoIndex - 1);
+                    }
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    if (currentVideoIndex < videos.length - 1) {
+                        loadVideo(currentVideoIndex + 1);
+                    }
                 });
             }
             
             // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
-                if (!video) return;
-                
                 switch(e.key) {
                     case ' ':
                         // Space bar to play/pause
-                        if (video.paused) {
-                            video.play();
-                            if (playBtn) playBtn.textContent = 'Pause';
+                        if (videoElement.paused) {
+                            videoElement.play();
                         } else {
-                            video.pause();
-                            if (playBtn) playBtn.textContent = 'Play';
+                            videoElement.pause();
                         }
+                        updateButtonStates();
                         e.preventDefault();
                         break;
                     case 'ArrowRight':
-                        // Right arrow to forward 10s
-                        video.currentTime += 10;
+                        if (e.ctrlKey || e.metaKey) {
+                            // Ctrl+Right to next video
+                            if (currentVideoIndex < videos.length - 1) {
+                                loadVideo(currentVideoIndex + 1);
+                            }
+                        } else {
+                            // Right arrow to forward 10s
+                            videoElement.currentTime += 10;
+                        }
                         e.preventDefault();
                         break;
                     case 'ArrowLeft':
-                        // Left arrow to backward 10s
-                        video.currentTime = Math.max(0, video.currentTime - 10);
+                        if (e.ctrlKey || e.metaKey) {
+                            // Ctrl+Left to previous video
+                            if (currentVideoIndex > 0) {
+                                loadVideo(currentVideoIndex - 1);
+                            }
+                        } else {
+                            // Left arrow to backward 10s
+                            videoElement.currentTime = Math.max(0, videoElement.currentTime - 10);
+                        }
                         e.preventDefault();
                         break;
                     case 'm':
                     case 'M':
                         // M key to mute/unmute
-                        video.muted = !video.muted;
-                        if (muteBtn) muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+                        videoElement.muted = !videoElement.muted;
+                        updateButtonStates();
+                        e.preventDefault();
+                        break;
+                    case 'n':
+                    case 'N':
+                        // N key to next video
+                        if (currentVideoIndex < videos.length - 1) {
+                            loadVideo(currentVideoIndex + 1);
+                        }
+                        e.preventDefault();
+                        break;
+                    case 'p':
+                    case 'P':
+                        // P key to previous video
+                        if (currentVideoIndex > 0) {
+                            loadVideo(currentVideoIndex - 1);
+                        }
                         e.preventDefault();
                         break;
                 }
             });
+            
+            // Update button states when video state changes
+            videoElement.addEventListener('play', updateButtonStates);
+            videoElement.addEventListener('pause', updateButtonStates);
+            videoElement.addEventListener('volumechange', updateButtonStates);
         }
     </script>
 </body>
